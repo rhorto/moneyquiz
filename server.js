@@ -1,79 +1,37 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
 const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const compression = require('compression');
-const rateLimit = require('express-rate-limit');
-const morgan = require('morgan');
-
-// Load environment variables
-dotenv.config();
-
-// Import routes
-const fastTrackRoutes = require('./api/fastTrackRoutes');
-const nicheRoutes = require('./api/nicheRoutes');
-const affiliateRoutes = require('./api/affiliateRoutes');
-
-// Initialize Express app
+const path = require('path');
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/affiliate-dashboard', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('MongoDB connected successfully'))
-.catch(err => console.error('MongoDB connection error:', err));
+// Serve static files
+app.use(express.static(__dirname));
 
-// Middleware
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-app.use(helmet()); // Security headers
-app.use(compression()); // Compress responses
-app.use(express.json()); // Parse JSON bodies
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
-app.use(morgan('dev')); // Logging
-
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: process.env.RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000, // 15 minutes
-  max: process.env.RATE_LIMIT_MAX || 100, // Limit each IP to 100 requests per windowMs
-  standardHeaders: true,
-  legacyHeaders: false
-});
-app.use(limiter);
-
-// Serve static files from public directory
-app.use(express.static('public'));
-
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'Server is running' });
+// Serve index.html for root path
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// API Routes
-app.use('/api/fasttrack', fastTrackRoutes);
-app.use('/api/niches', nicheRoutes);
-app.use('/api/affiliates', affiliateRoutes);
+// Serve tier-specific pages
+app.get('/free', (req, res) => {
+  res.sendFile(path.join(__dirname, 'free/index.html'));
+});
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    success: false,
-    message: 'An error occurred',
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
-  });
+app.get('/basic', (req, res) => {
+  res.sendFile(path.join(__dirname, 'basic/index.html'));
+});
+
+app.get('/medium', (req, res) => {
+  res.sendFile(path.join(__dirname, 'medium/index.html'));
+});
+
+app.get('/expert', (req, res) => {
+  res.sendFile(path.join(__dirname, 'expert/index.html'));
 });
 
 // Start server
-const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Access the dashboard at http://localhost:${PORT}`);
+  console.log(`Free tier: http://localhost:${PORT}/free`);
+  console.log(`Basic tier: http://localhost:${PORT}/basic`);
 });
-
-module.exports = app; // For testing

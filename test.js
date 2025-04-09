@@ -528,5 +528,52 @@ function testTierSwitching() {
   
   // Test upgrade modal
   try {
-    show
-(Content truncated due to size limit. Use line ranges to read in chunks)
+    showUpgradeModal('Basic', 'Test upgrade reason');
+    
+    // Check if modal was created
+    const modal = document.getElementById('upgradeModal');
+    if (modal) {
+      console.log('✓ Upgrade modal created successfully');
+      
+      // Check if recommended tier is highlighted
+      const recommendedCard = modal.querySelector('.pricing-card.recommended');
+      if (recommendedCard) {
+        console.log('✓ Recommended tier highlighted successfully');
+      } else {
+        console.error('✗ Recommended tier highlighting failed');
+      }
+      
+      // Test upgrade button
+      const upgradeButton = modal.querySelector('.pricing-action button');
+      if (upgradeButton) {
+        // Mock the alert function to prevent actual alert
+        const originalAlert = window.alert;
+        window.alert = function() {};
+        
+        upgradeButton.click();
+        console.log('✓ Upgrade button clicked successfully');
+        
+        // Restore original alert function
+        window.alert = originalAlert;
+      }
+      
+      // Close modal
+      const closeButton = modal.querySelector('.btn-close');
+      if (closeButton) {
+        closeButton.click();
+        console.log('✓ Upgrade modal closed successfully');
+      }
+    } else {
+      console.error('✗ Upgrade modal creation failed');
+    }
+  } catch (error) {
+    console.error('✗ Tier switching test failed:', error);
+  }
+  
+  console.log('Tier switching tests completed.');
+}
+
+// Helper function to check if element contains text
+jQuery.expr[':'].contains = function(a, i, m) {
+  return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+};

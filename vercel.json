@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    { "src": "/free", "dest": "/free/index.html" },
+    { "src": "/basic", "dest": "/basic/index.html" },
+    { "src": "/medium", "dest": "/medium/index.html" },
+    { "src": "/expert", "dest": "/expert/index.html" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
+}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Affiliate Dashboard - Free Tier</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../no-scroll-layout.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --dark-color: #5a5c69;
+            --light-color: #f8f9fc;
+            --danger-color: #e74a3b;
+            --warning-color: #f6c23e;
+            --free-color: #4e73df;
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, var(--free-color) 0%, #224abe 100%);
+        }
+        
+        .btn-free {
+            background-color: var(--free-color);
+            color: white;
+        }
+        
+        .btn-free:hover {
+            background-color: #224abe;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="dashboard-container"></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../allTiersDemoData.js"></script>
+    <script src="../freeTierFeatures.js"></script>
+    <script>
+        // Load dashboard structure
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('../index.html')
+                .then(response => response.text())
+                .then(html => {
+                    // Extract the body content
+                    const bodyContent = html.match(/<body>([\s\S]*)<\/body>/i)[1];
+                    
+                    // Insert into dashboard container
+                    document.getElementById('dashboard-container').innerHTML = bodyContent;
+                    
+                    // Update title to show Free Tier
+                    document.title = 'Ultimate Affiliate Dashboard - Free Tier';
+                    
+                    // Update sidebar brand
+                    const sidebarBrand = document.querySelector('.sidebar-brand');
+                    if (sidebarBrand) {
+                        sidebarBrand.innerHTML = '<i class="bi bi-bar-chart me-2"></i> FREE DASHBOARD';
+                    }
+                    
+                    // Initialize free tier features
+                    initializeFreeTierDashboard();
+                    initializeAffiliateFinderFree();
+                    initializeBasicContentTools();
+                    initializeStandardAnalytics();
+                    initializeFreeTierLimitations();
+                    
+                    // Show conversion limit warning when appropriate
+                    checkConversionLimits();
+                });
+        });
+    </script>
+</body>
+</html>
